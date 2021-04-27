@@ -2,7 +2,7 @@ import { UsersRepository } from '../repositories/UsersRepository'
 import { getCustomRepository, Repository } from 'typeorm'
 import { User } from '@models/User'
 
-interface IUserCreate {
+interface ICreateUser {
   name: string;
   email: string
 }
@@ -14,7 +14,7 @@ class UsersService {
     this.usersRepository = getCustomRepository(UsersRepository)
   }
 
-  async create ({ name, email }: IUserCreate) {
+  async create ({ name, email }: ICreateUser) {
     const userAlreadyExists = await this.usersRepository.findOne({ email })
 
     if (userAlreadyExists) {
