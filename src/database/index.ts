@@ -3,7 +3,7 @@ import { Connection, getConnectionOptions, createConnection } from 'typeorm'
 export default async (): Promise<Connection> => {
   const defaultOptions = await getConnectionOptions()
   const database = process.env.NODE_ENV === 'test'
-    ? 'db_test-nps-node-api'
+    ? process.env.TEST_DB_NAME
     : defaultOptions.database
 
   return createConnection(
