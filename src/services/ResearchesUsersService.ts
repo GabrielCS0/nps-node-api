@@ -37,22 +37,23 @@ class ResearchesUsersService {
       throw new Error('Research does not exist')
     }
 
-    const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs')
+    const researchUserAlreadyExists = await this.researchesUsersRepository.findOne({
+      where: { userId: user.id, value: null },
+      relations: ['user', 'research']
+    })
 
     const variables = {
       name: user.name,
       title: research.title,
       description: research.description,
-      id: user.id,
+      id: '',
       link: process.env.URL_MAIL
     }
 
-    const researchUserAlreadyExists = await this.researchesUsersRepository.findOne({
-      where: [{ userId: user.id }, { value: null }],
-      relations: ['user', 'research']
-    })
+    const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs')
 
     if (researchUserAlreadyExists) {
+      variables.id = researchUserAlreadyExists.id
       const researchUser = await this.MailService(researchUserAlreadyExists, {
         to: email, subject: research.title, variables, path: npsPath
       })
@@ -66,6 +67,8 @@ class ResearchesUsersService {
     })
 
     await this.researchesUsersRepository.save(researchUser)
+
+    variables.id = researchUser.id
 
     await this.MailService(researchUserAlreadyExists, {
       to: email, subject: research.title, variables, path: npsPath
