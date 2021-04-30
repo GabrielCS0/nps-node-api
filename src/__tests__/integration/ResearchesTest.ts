@@ -2,17 +2,6 @@ import request from 'supertest'
 import { app } from '../../app'
 
 export const researchesTest = () => describe('Researches', () => {
-  // beforeAll(async () => {
-  //   const connection = await createConnection()
-  //   await connection.runMigrations()
-  // })
-
-  // afterAll(async () => {
-  //   const connection = getConnection()
-  //   await connection.dropDatabase()
-  //   await connection.close()
-  // })
-
   it('Should be able to create a new research', async () => {
     const response = await request(app).post('/researches').send({
       title: 'New Research',
@@ -26,5 +15,11 @@ export const researchesTest = () => describe('Researches', () => {
     const response = await request(app).get('/researches')
     expect(response.status).toBe(200)
     expect(response.body.length).toBe(1)
+  })
+
+  it('Should not be able to create a Research with invalid variables', async () => {
+    const response = await request(app).post('/researches')
+    expect(response.status).toBe(400)
+    expect(response.body).toHaveProperty('message')
   })
 })

@@ -1,5 +1,4 @@
 import createConnection from '../../database'
-// import { getConnection } from 'typeorm'
 import request from 'supertest'
 import { app } from '../../app'
 
@@ -8,12 +7,6 @@ export const usersTest = () => describe('Users', () => {
     const connection = await createConnection()
     await connection.runMigrations()
   })
-
-  // afterAll(async () => {
-  //   const connection = getConnection()
-  //   await connection.dropDatabase()
-  //   await connection.close()
-  // })
 
   it('Should be able to create a new user', async () => {
     const response = await request(app).post('/users').send({
@@ -31,5 +24,11 @@ export const usersTest = () => describe('Users', () => {
     })
 
     expect(response.status).toBe(400)
+  })
+
+  it('Should not be able to create a new user with invalid variables', async () => {
+    const response = await request(app).post('/users')
+    expect(response.status).toBe(400)
+    expect(response.body).toHaveProperty('message')
   })
 })
