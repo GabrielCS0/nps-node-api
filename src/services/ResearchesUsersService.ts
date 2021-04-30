@@ -7,6 +7,7 @@ import { UsersRepository } from '../repositories/UsersRepository'
 import { ResearchesRepository } from '../repositories/ResearchesRepository'
 import { resolve } from 'path'
 import SendMailService, { ISendMail } from './SendMailService'
+import { AppError } from '../errors/AppError'
 
 interface ICreateResearchUser {
   email: string;
@@ -28,13 +29,13 @@ class ResearchesUsersService {
     const user = await this.usersRepository.findOne({ email })
 
     if (!user) {
-      throw new Error('User does not exist')
+      throw new AppError('User does not exist')
     }
 
     const research = await this.researchesRepository.findOne({ id: researchId })
 
     if (!research) {
-      throw new Error('Research does not exist')
+      throw new AppError('Research does not exist')
     }
 
     const researchUserAlreadyExists = await this.researchesUsersRepository.findOne({
